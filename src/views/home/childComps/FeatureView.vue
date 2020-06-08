@@ -16,5 +16,6 @@
 <style scoped>
     .feature img {
         width: 100%;
+        padding: 0 20px 0 0;
     }
 </style>
