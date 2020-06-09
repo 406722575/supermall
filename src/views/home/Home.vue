@@ -6,7 +6,10 @@
         <home-swiper :banners="banners"/>
         <recommend-view :recommends="recommends"/>
         <feature-view/>
-        <tab-control class="tab-control" :titles="['流行','新款', '精选']"/>
+        <tab-control class="tab-control"
+                     :titles="['流行','新款', '精选']"
+                     @tabClick="tabClick"/>
+        <good-list :goods="showGoods"/>
     </div>
 </template>
 
@@ -17,8 +20,9 @@
 
   import NavBar from "components/common/navbar/NavBar";
   import TabControl from 'components/content/tabControl/TabControl'
+  import GoodList from 'components/content/goods/GoodList'
 
-  import {getHomeMultidata} from 'network/api/home'
+  import {getHomeMultidata, getHomeGoods} from 'network/api/home'
 
 
   export default {
@@ -29,26 +33,71 @@
       FeatureView,
       NavBar,
       TabControl,
+      GoodList,
     },
     data() {
       return {
         banners: [],
         recommends: [],
-        goods:{
-          'pop':{page: 0, list: []},
-          'news':{page: 0, list: []},
-          'sell':{page: 0, list: []},
-        }
+        goods: {
+          'pop': {page: 0, list: []},
+          'new': {page: 0, list: []},
+          'sell': {page: 0, list: []},
+        },
+        //默认类型
+        currentType: 'pop'
+      }
+    },
+    computed:{
+      showGoods(){
+        return this.goods[this.currentType].list
       }
     },
     created() {
-      getHomeMultidata().then(res => {
-        console.log(res)
-        this.banners = res.banner.list
-        this.recommends = res.recommend.list
-      })
+      //请求多个数据
+      this.getHomeMultidata();
+      //请求商品数据
+      this.getHomeGoods('pop');
+      this.getHomeGoods('new');
+      this.getHomeGoods('sell');
+
     },
-    methods: {}
+    methods: {
+      /**
+       * 网络请求相关的方法
+       **/
+      getHomeMultidata() {
+        getHomeMultidata().then(res => {
+          this.banners = res.banner.list;
+          this.recommends = res.recommend.list
+        });
+      },
+      getHomeGoods(type) {
+        const page = this.goods[type].page + 1;
+        getHomeGoods(type, page).then(res => {
+          console.log(res);
+          this.goods[type].list.push(...res.list);
+          this.goods[type].page += 1;
+        })
+      },
+      /**
+       * 事件监听相关的方法,3个链接
+       **/
+      tabClick(index) {
+        switch (index) {
+          case 0:
+            this.currentType = 'pop';
+            break;
+          case 1:
+            this.currentType = 'new';
+            break;
+          case 2:
+            this.currentType = 'sell';
+            break;
+        }
+      }
+
+    }
   };
 </script>
 
@@ -72,9 +121,10 @@
         z-index: 9;
     }
 
-    .tab-control{
+    .tab-control {
         position: sticky;
         top: 44px;
+        z-index: 9;
     }
 
 </style>

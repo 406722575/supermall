@@ -26,6 +26,8 @@
     methods: {
       itemClick(index) {
         this.currentIndex = index;
+        //子传父，自定义监听tabClick事件，在父组件中写@tabClick事件，且写tabClick定义方法,并把点击的值传入
+        this.$emit('tabClick', index)
       }
     }
   }
@@ -38,6 +40,7 @@
         font-size: 15px;
         height: 40px;
         line-height: 40px;
+        background-color: #fff;
     }
 
     .tab-control-item {
