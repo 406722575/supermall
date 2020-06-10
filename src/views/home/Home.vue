@@ -3,6 +3,7 @@
         <nav-bar class="home-nav">
             <div class="nav-center" slot="nav-center">购物街</div>
         </nav-bar>
+    <scroll class="content">
         <home-swiper :banners="banners"/>
         <recommend-view :recommends="recommends"/>
         <feature-view/>
@@ -10,6 +11,7 @@
                      :titles="['流行','新款', '精选']"
                      @tabClick="tabClick"/>
         <good-list :goods="showGoods"/>
+    </scroll>
     </div>
 </template>
 
@@ -21,8 +23,11 @@
   import NavBar from "components/common/navbar/NavBar";
   import TabControl from 'components/content/tabControl/TabControl'
   import GoodList from 'components/content/goods/GoodList'
+  import Scroll from 'components/common/scroll/Scroll'
 
   import {getHomeMultidata, getHomeGoods} from 'network/api/home'
+
+
 
 
   export default {
@@ -34,6 +39,7 @@
       NavBar,
       TabControl,
       GoodList,
+      Scroll,
     },
     data() {
       return {
@@ -104,7 +110,8 @@
 <style lang="less" scoped>
     #home {
         padding-top: 44px;
-        padding-bottom: 800px;
+        height: 100vh;  //可视高度
+        position: relative;
     }
 
     .home-nav {
@@ -125,6 +132,17 @@
         position: sticky;
         top: 44px;
         z-index: 9;
+    }
+
+    .content {
+        /*margin-top: 44px;*/
+        //height: clac(100% - 49px);
+        position: absolute;
+        top: 44px;
+        bottom: 49px;
+        left: 0;
+        right: 0;
+        overflow: hidden;
     }
 
 </style>
