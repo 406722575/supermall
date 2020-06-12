@@ -11,6 +11,7 @@
   export default {
     name: "TabBarItem",
     props: {
+       /* 该path是通过父组件传递下来的值，所以会根据我点击的父组件显示不同的值 */
       path: String,
       activeColor: {
         type: String,
@@ -23,6 +24,7 @@
       }
     },
     computed: {
+      /* 通过路由路径是否相等，来判断点击的是哪一个 */
       isActive() {
         // /home -> item1(/home) = true
         // /home -> item1(/category) = false
@@ -44,6 +46,7 @@
 
 <style scoped>
   .tab-bar-item {
+    /* display:flex 只针对子标签，所以在<template #default>下面只能有一个 子标签，如果外层套了一层div，则无用 */
     flex: 1;
     text-align: center;
     height: 49px;

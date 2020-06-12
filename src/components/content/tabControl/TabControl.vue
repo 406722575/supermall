@@ -3,7 +3,8 @@
         <div v-for="(item, index) in titles"
              class="tab-control-item"
              :class="{active: index === currentIndex}"
-             @click="itemClick(index)">
+             @click="itemClick(index)"
+            :key="index">
             <span>{{item}}</span>
         </div>
     </div>
@@ -26,8 +27,8 @@
     methods: {
       itemClick(index) {
         this.currentIndex = index;
-        //子传父，自定义监听tabClick事件，在父组件中写@tabClick事件，且写tabClick定义方法,并把点击的值传入
-        this.$emit('tabClick', index)
+        //子传父，自定义监听tabEvent事件，在父组件中写@tabEvent事件，且写tabEvent定义方法,并把点击的值传入
+        this.$emit('tabEvent', index)
       }
     }
   }
