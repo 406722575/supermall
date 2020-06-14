@@ -10,15 +10,15 @@
 </template>
 
 <script>
-  export default {
-    name: "RecommendView",
-    props: {
-      recommends: {
-        type: Array,
-        default: []
-      }
+    export default {
+        name: "RecommendView",
+        props: {
+            recommends: {
+                type: Array,
+                default: []
+            }
+        }
     }
-  }
 </script>
 
 <style scoped>
@@ -27,12 +27,11 @@
         width: 100%;
         text-align: center;
         font-size: 12px;
-
-        padding: 10px 15px 20px 0;
-        border-botoom: 10px solid #eee;
+        padding: 10px 0 20px;
+        border-bottom: 10px solid #eee;
     }
 
-    .recommend-item{
+    .recommend-item {
         flex: 1;
     }
 

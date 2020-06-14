@@ -27,7 +27,7 @@
     methods: {
       itemClick(index) {
         this.currentIndex = index;
-        //子传父，自定义监听tabEvent事件，在父组件中写@tabEvent事件，且写tabEvent定义方法,并把点击的值传入
+        //子传父，在父页面需保持一致
         this.$emit('tabEvent', index)
       }
     }
