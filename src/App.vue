@@ -2,8 +2,8 @@
     <div id="app" class="wrapper">
         <keep-alive exclude="Detail">
             <router-view/>
-            <main-tab-bar/>
         </keep-alive>
+        <main-tab-bar/>
 
     </div>
 </template>

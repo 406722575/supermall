@@ -1,6 +1,6 @@
 <template>
     <div class="goods-item">
-        <img :src="goodsItem.show.img" alt="" @load="imageLoad" @click="itemClick">
+        <img v-lazy="showImage" alt="" @load="imageLoad" @click="itemClick">
         <div class="goods-info">
             <p>{{goodsItem.title}}</p>
             <span class="price">{{goodsItem.price}}</span>
@@ -28,11 +28,17 @@
                 // 跳转到详情页面
                 this.$router.push('/detail/'+ iid)
             },
+        },
+        computed:{
+            showImage(){
+                return this.goodsItem.img || this.goodsItem.image || this.goodsItem.show.img;
+            }
         }
     }
 </script>
 
 <style scoped>
+
     .goods-item {
         padding-bottom: 40px;
         position: relative;
