@@ -1,3 +1,4 @@
+完成的事件监听或者给图片设
 <template>
     <div id="home">
         <nav-bar class="home-nav">
@@ -40,7 +41,7 @@
     import BackTop from 'components/content/backTop/BackTop'
 
     import {getMultiData, getProduct} from 'network/home'
-    import {debounce} from 'common/utils'
+    import {itemListenerMixin} from 'common/mixin'
 
     export default {
         name: "Home",
@@ -54,6 +55,7 @@
             Scroll,
             BackTop,
         },
+        mixins: [itemListenerMixin],
         data() {
             return {
                 banners: [],
@@ -86,8 +88,13 @@
             this.$refs.scroll.refresh();
             this.$refs.scroll.scrollTo(0, this.scrollY, 0);
         },
-        deactivated() { //离开时保存位置
+        deactivated() {
+            //离开页面时记录页面离开时的滚动位置
             this.scrollY = this.$refs.scroll.getScrollY()
+            //离开页面时取消全局事件的监听，解决详情页面中不能滚动问题
+            // 通过给 $off第二参数传递一个函数，可以让其只销毁home里的事件，而不会销毁detail里的事件
+            this.$bus.$off("imgFinishLoaded", this.imgLoadedListener);
+            console.log("销毁Home的bus");
         },
         created() { //组件创建完成
             //请求banner和recommend
@@ -99,14 +106,6 @@
             this._getProduct("sell");
         },
         mounted() {
-            // l。图片加载完成的事件监听或者给图片设置固定高度,解决图片未加载完，导致有时不能滚动问题
-            //setTimeout会延迟执行，这里不用传参
-            const refresh = debounce(this.$refs.scroll.refresh) //刷新频率过高，使用防抖函数，一定时间执行一次
-            //监听滚动区域每一张图片是否加载完成，需要在mainjs中先创建$bus，用于管理事件，不是状态
-            this.$bus.$on('itemImageFinshLoad', () => {
-                refresh()
-            })
-
         },
         methods: {
             /**
@@ -137,8 +136,8 @@
                 // 获取当前标题点击的类型
                 this.currentType = Object.keys(this.titles)[index];
                 // 保持点击内容显示一致
-                this.$refs.tabControl1.cuurentIndex = index
-                this.$refs.tabControl2.cuurentIndex = index
+                this.$refs.tabControl1.currentIndex = index
+                this.$refs.tabControl2.currentIndex = index
             },
             backClick() { // 返回顶部
                 // ref拿到scroll组件中的对象属性(方法)
@@ -147,7 +146,7 @@
             // 监听滚动,显示隐藏backtop
             contentScroll(position) {
                 // pos.y返回的是负数，所以要改成正数
-                this.isShowBackTop =(-position.y) > 1000;
+                this.isShowBackTop = (-position.y) > 1000;
                 // if (-position.y >= 1000 && !this.isShowBackTop) {
                 //     this.isShowBackTop = true;
                 // } else if (-position.y < 1000 && this.isShowBackTop) {

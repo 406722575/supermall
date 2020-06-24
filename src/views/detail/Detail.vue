@@ -9,7 +9,6 @@
             <detail-param-info :params-info="paramsInfo"/>
             <detail-comment-info :comment-info='commentInfo' ref="comment"/>
             <goods-list :goods='recommends' ref="recommend"/>
-
         </scroll>
     </div>
 </template>
@@ -26,11 +25,13 @@
     import GoodsList from 'components/content/goods/GoodList'
 
     import {getDetail, GoodsBaseInfo, ShopInfo, ParamsInfo, getRecommend} from 'network/detail'
+    import {itemListenerMixin} from 'common/mixin'
 
     import Scroll from 'components/common/scroll/Scroll'
 
     export default {
         name: "Detail",
+        mixins: [itemListenerMixin],
         data() {
             return {
                 iid: null,
@@ -48,6 +49,13 @@
             this.iid = this.$route.params.iid;
             //请求详情页面
             this._getDetail(this.iid)
+        },
+        mounted() {
+        },
+        destroyed() {
+            //离开页面时取消全局事件的监听
+            this.$bus.$off("imgFinishLoaded", this.imgLoadedListener);
+            console.log("销毁Detail的bus")
         },
         components: {
             DetailParamInfo,
@@ -95,7 +103,8 @@
             },
 
             imageLoad() {
-                this.$refs.scroll.refresh();
+                // this.deBounceRefresh();
+                tihs.$refs.scroll.refresh()
             }
 
         }

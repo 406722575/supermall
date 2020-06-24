@@ -28,6 +28,7 @@ export default {
   },
   methods: {
     imgLoad() {
+      //可以在home页面中，单独$off掉home的那个事件。
       this.$bus.$emit("imgFinishLoaded");
     }
   }
