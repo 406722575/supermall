@@ -1,11 +1,11 @@
 <template>
     <div id="detail">
-        <detail-nav-bar class="detail-nav"/>
+        <detail-nav-bar class="detail-nav" @navTitleClick="navTitleClick"/>
         <scroll class="scroll" ref="scroll">
             <detail-swiper :topImages="topImages"/>
             <detail-base-info :goods="goods"/>
             <detail-shop-info :shop='shopInfo'/>
-            <detail-goods-info :detail-info="detailInfo" @imgageLoad="imageLoad"/>
+            <detail-goods-info :detail-info="detailInfo" @detailImageLoad="detailImageLoad"/>
             <detail-param-info :params-info="paramsInfo"/>
             <detail-comment-info :comment-info='commentInfo' ref="comment"/>
             <goods-list :goods='recommends' ref="recommend"/>
@@ -102,9 +102,11 @@
                 // this.recommends = recommends.data.list;
             },
 
-            imageLoad() {
-                // this.deBounceRefresh();
-                tihs.$refs.scroll.refresh()
+            detailImageLoad() {
+                this.newRefresh()
+            },
+            navTitleClick(index){
+                console.log(index);
             }
 
         }

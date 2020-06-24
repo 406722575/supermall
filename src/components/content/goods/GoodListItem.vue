@@ -20,7 +20,7 @@
         },
         methods: {
             imageLoad() {// 发射事件总线,监听图片加载完成
-                this.$bus.$emit('itemImageFinshLoad')
+                this.$bus.$emit('itemImgLoad')
             },
             itemClick() {
                 // 获取iid

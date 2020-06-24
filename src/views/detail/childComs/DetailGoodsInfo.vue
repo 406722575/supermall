@@ -39,14 +39,15 @@
         },
         methods: {
             imgLoad() {
-                // 判断所有图片加载完，再进行一次回调
+                //判断，所有图片都加载完了，那么进行一次回调就可以了
                 if (++this.count === this.imagesLength) {
-                    this.$emit("imgLoad");
+                    this.$emit("detailImageLoad");
                 }
             }
         },
         watch: {
             detailInfo() {
+                // 获取图片的个数
                 this.imagesLength = this.detailInfo.detailImage[0].list.length;
             }
         }

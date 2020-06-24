@@ -93,7 +93,7 @@
             this.scrollY = this.$refs.scroll.getScrollY()
             //离开页面时取消全局事件的监听，解决详情页面中不能滚动问题
             // 通过给 $off第二参数传递一个函数，可以让其只销毁home里的事件，而不会销毁detail里的事件
-            this.$bus.$off("imgFinishLoaded", this.imgLoadedListener);
+            this.$bus.$off("itemImgLoad", this.itemImgListener);
             console.log("销毁Home的bus");
         },
         created() { //组件创建完成

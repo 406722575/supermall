@@ -4,18 +4,18 @@ import {debounce} from 'common/utils'
 export const itemListenerMixin = {
     data() {
         return {
-            imgLoadedListener: null,
-            deBounceRefresh: null
+            itemImgListener:null,
+            newRefresh: null
         }
     },
     mounted() {
         //监听图片刷新
-        this.deBounceRefresh = debounce(this.$refs.scroll.refresh, 100);
-        this.imgLoadedListener = () => {
+        this.newRefresh = debounce(this.$refs.scroll.refresh, 200);
+        this.itemImgListener  = () => {
             //利用 $bus 事件监听，去刷新 scroll的高度
-            this.deBounceRefresh();
+            this.newRefresh();
         };
-        this.$bus.$on("imgFinishLoaded", this.imgLoadedListener);
+        this.$bus.$on("itemImgLoad", this.itemImgListener);
 
     }
 }
