@@ -1,15 +1,17 @@
 <template>
     <div id="detail">
-        <detail-nav-bar class="detail-nav" @navTitleClick="navTitleClick"/>
-        <scroll class="scroll" ref="scroll">
+        <detail-nav-bar class="detail-nav" @navTitleClick="navTitleClick" ref="nav"/>
+        <scroll class="scroll" ref="scroll" @scroll="scroll" :probe-type="3">
             <detail-swiper :topImages="topImages"/>
             <detail-base-info :goods="goods"/>
             <detail-shop-info :shop='shopInfo'/>
             <detail-goods-info :detail-info="detailInfo" @detailImageLoad="detailImageLoad"/>
-            <detail-param-info :params-info="paramsInfo"/>
+            <detail-param-info :params-info="paramsInfo" ref="params"/>
             <detail-comment-info :comment-info='commentInfo' ref="comment"/>
             <goods-list :goods='recommends' ref="recommend"/>
         </scroll>
+        <detail-bottom-bar/>
+        <back-top @click.native="backClick" v-show="isShowBackTop"/>
     </div>
 </template>
 
@@ -21,17 +23,21 @@
     import DetailParamInfo from './childComs/DetailParamInfo'
     import DetailGoodsInfo from './childComs/DetailGoodsInfo'
     import DetailCommentInfo from './childComs/DetailCommentInfo'
+    import DetailBottomBar from './childComs/DetailBottomBar'
 
     import GoodsList from 'components/content/goods/GoodList'
 
     import {getDetail, GoodsBaseInfo, ShopInfo, ParamsInfo, getRecommend} from 'network/detail'
-    import {itemListenerMixin} from 'common/mixin'
+    import {itemListenerMixin, backTopMixin} from 'common/mixin'
 
     import Scroll from 'components/common/scroll/Scroll'
 
+    import {debounce} from 'common/utils'
+    import BackTop from "../../components/content/backTop/BackTop";
+
     export default {
         name: "Detail",
-        mixins: [itemListenerMixin],
+        mixins: [itemListenerMixin,backTopMixin],
         data() {
             return {
                 iid: null,
@@ -42,6 +48,9 @@
                 paramsInfo: {},
                 commentInfo: {},
                 recommends: [],
+                themeTopYs: [],
+                getThemeTopY: null,
+                currentIndex: 0,
             }
         },
         created() {
@@ -49,15 +58,34 @@
             this.iid = this.$route.params.iid;
             //请求详情页面
             this._getDetail(this.iid)
+
+            //给getThemeTopy赋值
+            this.getThemeTopY = debounce(() => {
+                this.themeTopYs = []
+                this.themeTopYs.push(0);
+                this.themeTopYs.push(this.$refs.params.$el.offsetTop);
+                this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
+                this.themeTopYs.push(this.$refs.recommend.$el.offsetTop);
+                this.themeTopYs.push(Number.MAX_VALUE);
+                console.log(this.themeTopYs);
+            }, 100)
+
+
         },
         mounted() {
+
+
+        },
+        updated() {
+
         },
         destroyed() {
             //离开页面时取消全局事件的监听
-            this.$bus.$off("imgFinishLoaded", this.imgLoadedListener);
+            this.$bus.$off("itemImgLoad", this.imgLoadedListener);
             console.log("销毁Detail的bus")
         },
         components: {
+            BackTop,
             DetailParamInfo,
             DetailShopInfo,
             DetailNavBar,
@@ -67,13 +95,14 @@
             DetailGoodsInfo,
             DetailCommentInfo,
             GoodsList,
+            DetailBottomBar,
 
         },
         methods: {
             async _getDetail(iid) {
                 const res = await getDetail(iid);
                 if (!res) return;
-                console.log(res);
+                // console.log(res);
                 const data = res.result;
                 this.topImages = data.itemInfo.topImages;
                 //获取商品基本信息
@@ -100,14 +129,36 @@
                 // let recommends = await getRecommends();
                 // console.log(recommends);
                 // this.recommends = recommends.data.list;
+
             },
 
             detailImageLoad() {
                 this.newRefresh()
+                //图片加载完成后获取offsetTop
+                this.getThemeTopY()
+
             },
-            navTitleClick(index){
-                console.log(index);
-            }
+            navTitleClick(index) {
+                this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 200)
+            },
+            scroll(position) {//点击导航标题，显示对应的标题信息
+                //获取y值
+                const positionY = -position.y
+                //positionY和offsetTopt中值进行两个值之间的对比
+                let length = this.themeTopYs.length
+                //最后一个最大值不需要遍历length - 1
+                for (let i = 0; i < length - 1; i++) {
+                    //防止频繁赋值his.currentIndex !== i
+                    if (this.currentIndex !== i && (positionY >= this.themeTopYs[i] &&
+                        positionY < this.themeTopYs[i + 1])) {
+                        this.currentIndex = i;
+                        console.log(this.currentIndex);
+                        this.$refs.nav.currentIndex = this.currentIndex
+                    }
+                }
+                //是否显示回到顶部
+                this.ListenShowBackTop(position);
+            },
 
         }
     }
@@ -134,7 +185,7 @@
 
     .scroll {
         /*设置滚动区域*/
-        height: calc(100% - 44px);
+        height: calc(100% - 44px - 49px);
         overflow: hidden;
     }
 </style>

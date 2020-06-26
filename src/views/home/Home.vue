@@ -1,4 +1,3 @@
-完成的事件监听或者给图片设
 <template>
     <div id="home">
         <nav-bar class="home-nav">
@@ -24,7 +23,6 @@
                          ref="tabControl2"/>
             <good-list :goods="showGoods"/>
         </scroll>
-        <!-- 监听组件需要native-->
         <back-top @click.native="backClick" v-show="isShowBackTop"/>
     </div>
 </template>
@@ -38,10 +36,10 @@
     import TabControl from 'components/content/tabControl/TabControl'
     import GoodList from 'components/content/goods/GoodList'
     import Scroll from 'components/common/scroll/Scroll'
-    import BackTop from 'components/content/backTop/BackTop'
+
 
     import {getMultiData, getProduct} from 'network/home'
-    import {itemListenerMixin} from 'common/mixin'
+    import {itemListenerMixin, backTopMixin} from 'common/mixin'
 
     export default {
         name: "Home",
@@ -53,9 +51,9 @@
             TabControl,
             GoodList,
             Scroll,
-            BackTop,
+
         },
-        mixins: [itemListenerMixin],
+        mixins: [itemListenerMixin, backTopMixin],
         data() {
             return {
                 banners: [],
@@ -72,7 +70,6 @@
                     new: "新款",
                     sell: "精选"
                 },
-                isShowBackTop: false,
                 tabOffsetTop: 0,
                 isTabFixed: false,
                 scrollY: 0,
@@ -139,27 +136,15 @@
                 this.$refs.tabControl1.currentIndex = index
                 this.$refs.tabControl2.currentIndex = index
             },
-            backClick() { // 返回顶部
-                // ref拿到scroll组件中的对象属性(方法)
-                this.$refs.scroll.scrollTo(0, 0)
-            },
             // 监听滚动,显示隐藏backtop
             contentScroll(position) {
-                // pos.y返回的是负数，所以要改成正数
-                this.isShowBackTop = (-position.y) > 1000;
-                // if (-position.y >= 1000 && !this.isShowBackTop) {
-                //     this.isShowBackTop = true;
-                // } else if (-position.y < 1000 && this.isShowBackTop) {
-                //     this.isShowBackTop = false;
-                // }
+
+                this.ListenShowBackTop(position)
+
 
                 // 决定tabControl是否吸顶
                 this.isTabFixed = (-position.y) > this.tabOffsetTop
-                // if (-position.y >= this.tabOffsetTop && !this.isTabFixed) {
-                //     this.isTabFixed = true;
-                // } else if (-position.y < this.tabOffsetTop && this.isTabFixed) {
-                //     this.isTabFixed = false;
-                // }
+
             },
             // 到底部时上拉加载更多
             LoadMore() {

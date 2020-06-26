@@ -1,4 +1,4 @@
-export function debounce(func, delay) { // 防抖函数，一定时间内执行一次
+export function debounce(func, delay=50) { // 防抖函数，一定时间内执行一次
     let timer = null
     return function (...args) {
         if (timer) clearTimeout(timer)
