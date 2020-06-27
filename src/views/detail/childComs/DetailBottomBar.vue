@@ -15,7 +15,7 @@
             </div>
         </div>
         <div class="bar-item bar-right">
-            <div class="cart" @click="addToCart">加入购物车</div>
+            <div class="cart" @click="addCart">加入购物车</div>
             <div class="buy" @click="buyTocart">购买</div>
         </div>
     </div>
@@ -27,7 +27,7 @@
         name: 'DetailBottomBar',
         //方法集合
         methods: {
-            addToCart() {
+            addCart() {
                 // 监听加入购物车事件
                 this.$emit('addCart')
             },
@@ -40,7 +40,7 @@
 </script>
 <style scoped>
     .bottom-bar {
-        height: 49px;
+        height: 58px;
         position: fixed;
         background-color: #fff;
         left: 0;
@@ -82,7 +82,7 @@
     .bar-right {
         font-size: 15px;
         color: #fff;
-        line-height: 58px;
+        line-height: 49px;
     }
 
     .bar-right .cart {

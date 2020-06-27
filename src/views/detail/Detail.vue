@@ -10,8 +10,9 @@
             <detail-comment-info :comment-info='commentInfo' ref="comment"/>
             <goods-list :goods='recommends' ref="recommend"/>
         </scroll>
-        <detail-bottom-bar/>
+        <detail-bottom-bar  @addCart="addCart"/>
         <back-top @click.native="backClick" v-show="isShowBackTop"/>
+<!--        <toast :message="message" :show="show"/>-->
     </div>
 </template>
 
@@ -26,7 +27,7 @@
     import DetailBottomBar from './childComs/DetailBottomBar'
 
     import GoodsList from 'components/content/goods/GoodList'
-
+    // import Toast from 'components/common/toast/Toast'
     import {getDetail, GoodsBaseInfo, ShopInfo, ParamsInfo, getRecommend} from 'network/detail'
     import {itemListenerMixin, backTopMixin} from 'common/mixin'
 
@@ -51,6 +52,8 @@
                 themeTopYs: [],
                 getThemeTopY: null,
                 currentIndex: 0,
+                // message: '',
+                // show: false,
             }
         },
         created() {
@@ -96,6 +99,7 @@
             DetailCommentInfo,
             GoodsList,
             DetailBottomBar,
+            Toast
 
         },
         methods: {
@@ -141,7 +145,8 @@
             navTitleClick(index) {
                 this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 200)
             },
-            scroll(position) {//点击导航标题，显示对应的标题信息
+            //点击导航标题，显示对应的标题信息
+            scroll(position) {
                 //获取y值
                 const positionY = -position.y
                 //positionY和offsetTopt中值进行两个值之间的对比
@@ -159,6 +164,26 @@
                 //是否显示回到顶部
                 this.ListenShowBackTop(position);
             },
+            addCart(){
+                //获取购物车展示的信息
+                const product = {}
+                product.image = this.topImages[0];
+                product.title = this.goods.title;
+                product.desc = this.goods.desc;
+                product.price = this.goods.realPrice;
+                product.iid = this.iid;
+                //将商品加入购物车,使用vuex
+                // this.$store.commit('addCart', product)
+                this.$store.dispatch('addCart', product).then(res=>{
+                    // this.show = true;
+                    // this.message = res;
+                    //
+                    // setTimeout(()=>{
+                    //     this.show = false
+                    //     this.message = ''
+                    // }, 1500)
+                })
+            }
 
         }
     }
@@ -176,7 +201,7 @@
         height: 100vh;
     }
 
-    /*!*添加滚动后会消失*!*/
+    /*添加滚动后会消失*/
     .detail-nav {
         position: relative;
         z-index: 9;
