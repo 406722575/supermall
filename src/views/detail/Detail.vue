@@ -12,7 +12,6 @@
         </scroll>
         <detail-bottom-bar  @addCart="addCart"/>
         <back-top @click.native="backClick" v-show="isShowBackTop"/>
-<!--        <toast :message="message" :show="show"/>-->
     </div>
 </template>
 
@@ -27,7 +26,6 @@
     import DetailBottomBar from './childComs/DetailBottomBar'
 
     import GoodsList from 'components/content/goods/GoodList'
-    // import Toast from 'components/common/toast/Toast'
     import {getDetail, GoodsBaseInfo, ShopInfo, ParamsInfo, getRecommend} from 'network/detail'
     import {itemListenerMixin, backTopMixin} from 'common/mixin'
 
@@ -52,8 +50,6 @@
                 themeTopYs: [],
                 getThemeTopY: null,
                 currentIndex: 0,
-                // message: '',
-                // show: false,
             }
         },
         created() {
@@ -99,7 +95,6 @@
             DetailCommentInfo,
             GoodsList,
             DetailBottomBar,
-            Toast
 
         },
         methods: {
@@ -175,13 +170,7 @@
                 //将商品加入购物车,使用vuex
                 // this.$store.commit('addCart', product)
                 this.$store.dispatch('addCart', product).then(res=>{
-                    // this.show = true;
-                    // this.message = res;
-                    //
-                    // setTimeout(()=>{
-                    //     this.show = false
-                    //     this.message = ''
-                    // }, 1500)
+                    this.$toast.show(res, 1500)
                 })
             }
 
